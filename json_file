@@ -1,0 +1,16 @@
+{
+  "questions": [
+    {
+      "question": "Hello",
+      "answer": "Hey there"
+    },
+    {
+      "question": "how you can learn",
+      "answer": "Type command 'Learn: Question-Answer'"
+    },
+    {
+      "question": "how i can teach you new questions",
+      "answer": "Type command 'Learn: Question-Answer'"
+    }
+  ]
+}

@@ -3,7 +3,8 @@ from tkinter import ttk
 import json
 from difflib import get_close_matches
 
-JSON_FILE = 'JSON_FILE'
+JSON_FILE = 'json_file'
+
 
 def load_knowledge_base(file_path):
     with open(file_path, 'r') as file:
@@ -30,11 +31,10 @@ def get_answer_for_question(question, knowledge_base):
             return q["answer"]
 
 
-font_style = ("Helvetica", 10)
 # App GUI
 window = tk.Tk()
 style = ttk.Style()
-style.theme_use("alt")
+font_style = ("Helvetica", 10)
 window.title("Virtual Assistant")
 window.configure(bg="#f0f0f0")
 
@@ -58,7 +58,7 @@ textInput.insert(0, "Write your message here")
 
 
 def send_message(event=None):
-    knowledge = load_knowledge_base('JSON_FILE')
+    knowledge = load_knowledge_base(JSON_FILE)
 
     text = textInput.get()
     if text.lower() == 'quit':
@@ -69,15 +69,16 @@ def send_message(event=None):
 
         if best_match:
             answer = get_answer_for_question(best_match, knowledge)
+            messages.configure(bg="#CCE5FF", fg="#000000", font=font_style)
             messages.insert(tk.END, f"Bot: {answer}")
-
         # Learn a bot new answers
         elif text.lower().startswith('learn: '):
             qia = text[7:]
             new_question, new_answer = qia.split("-", 1)
             knowledge["questions"].append({"question": new_question.strip(), "answer": new_answer.strip()})
-            save_knowledge_base('JSON_FILE', knowledge)
-            messages.insert(tk.END, f"Bot: Thank you for teaching me a new answer")
+            save_knowledge_base(JSON_FILE, knowledge)
+            messages.insert(tk.END, f"Bot: Thank you for teaching me a new answer,"
+                                    f" you can change it with 'Change: Question-New answer'")
 
         # Change answer that already exist
         elif text.lower().startswith('change: '):
@@ -90,17 +91,17 @@ def send_message(event=None):
                     save_knowledge_base(JSON_FILE, knowledge)
                     messages.insert(tk.END, f"Bot: The answer has been changed")
             if not any(q["question"] == question for q in knowledge["questions"]):
-                    messages.insert(tk.END, f"Bot: I Can't change that answer, answer doesn't exist")
+                messages.insert(tk.END, f"Bot: I Can't change that answer, answer doesn't exist")
 
         else:
-            messages.insert(tk.END, f"Bot: I don't know answer, please teach me with 'Learn: question-answer'")
+            messages.insert(tk.END, f"Bot: I don't know answer, please teach me with 'Learn: Question-Answer'")
         textInput.delete(0, tk.END)
 
 
-sendButton = (tk.Button(master=window, text="send", command=send_message))
+sendButton = (tk.Button(master=window, text="Send", command=send_message))
 textInput.bind("<Return>", send_message)
 sendButton.grid(row=1, column=1, pady=10, sticky="ew")
-sendButton.configure(bg="#BFBFBF", fg="#ffffff", font=font_style)
+sendButton.configure(bg="#CCE5FF", fg="#000000", font=font_style)
 
 window.rowconfigure(0, minsize=500, weight=1)
 window.rowconfigure(1, minsize=50, weight=0)
